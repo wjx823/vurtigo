@@ -490,8 +490,8 @@ void TestSuiteBasic::basicTestCreateObjects() {
   testObject(m_2DPlaneColor, "Color Test Image 256x256");
 
   // Test image (16-bit grayscale)
-  m_2DPlane16 = rtBaseHandle::instance().requestNewObject(rtConstants::OT_2DObject, "Test Image 16-bit 256x256");
-  testObject(m_2DPlane16, "Test Image 16-bit 256x256");
+  m_2DPlane16 = rtBaseHandle::instance().requestNewObject(rtConstants::OT_2DObject, "Liver Test Image 16-bit 256x256");
+  testObject(m_2DPlane16, "Infusion Test Image 16-bit 256x256");
 
   // Test matrix
   m_matrix = rtBaseHandle::instance().requestNewObject(rtConstants::OT_vtkMatrix4x4, "Test Matrix");
@@ -616,6 +616,49 @@ void TestSuiteBasic::changeImage() {
     }
   }
 */  
+
+  if (m_2DPlane16 >= 0) {
+    rt2DSliceDataObject* ptObj = static_cast<rt2DSliceDataObject*>(rtBaseHandle::instance().getObjectWithID(m_2DPlane16));
+    if (!ptObj) {
+      emit sendOutput("Could Not Get 2D 16-bit Plane Object! FAIL!");
+    } else {
+//      emit sendOutput("Change 2D 16-bit Plane Info...");
+      
+      ptObj->lock();
+      vtkImageData *image = ptObj->getRawData();
+      
+      vtkImageData *imageTemp = vtkImageData::New();
+      
+      imageTemp->ShallowCopy(image);;
+      
+      int px = 100 +  10*(2*(rand()%10000)/10000.0 - 1);
+      int py = 100 +  10*(2*(rand()%10000)/10000.0 - 1);
+          
+      signed short *p = (signed short *)imageTemp->GetScalarPointer(px, py, 0);
+          
+      *p += 100;
+      
+      ptObj->copyImageData2D(imageTemp);
+      
+      ptObj->Modified();
+      ptObj->unlock();
+
+/*      
+      if (image)
+        {
+          int px = 100 +  10*(2*(rand()%10000)/10000.0 - 1);
+          int py = 100 +  10*(2*(rand()%10000)/10000.0 - 1);
+          
+          signed short *p = (signed short *)image->GetScalarPointer(px, py, 0);
+          
+          *p += 100;
+          
+//          cout << px << " " << py << " " << *p << endl;
+        }
+*/        
+        
+    }
+  }
 
   static int count = 0;
   count++;
