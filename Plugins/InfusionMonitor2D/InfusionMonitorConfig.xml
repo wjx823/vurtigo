@@ -1,0 +1,4 @@
+<plugin>
+  <name title="Infusion Monitor" version="1.0"/>
+  <lib libname="InfusionMonitor" libpath="/home/spintilie/Code/Vurtigo-build/bin/"/>
+</plugin>

@@ -53,3 +53,9 @@ set(VURTIGO_PLUGIN_CAMERA_MOTION ON CACHE BOOL "Compile the Camera Motion Plugin
 if (VURTIGO_PLUGIN_CAMERA_MOTION)
 add_subdirectory(CameraMotion)
 endif (VURTIGO_PLUGIN_CAMERA_MOTION)
+
+
+set(VURTIGO_PLUGIN_INFUSION_MONITOR_2D ON CACHE BOOL "Compile the Infusion Monitoring (2D)")
+if (VURTIGO_PLUGIN_INFUSION_MONITOR_2D)
+add_subdirectory(InfusionMonitor2D)
+endif (VURTIGO_PLUGIN_INFUSION_MONITOR_2D)
