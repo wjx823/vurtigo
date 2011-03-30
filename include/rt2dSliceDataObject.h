@@ -143,6 +143,7 @@ public:
 
   void showWindowLevel();
 
+ public:
  signals:
   void copyImageData2DSignal();
 
