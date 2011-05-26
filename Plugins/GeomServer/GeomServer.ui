@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>414</height>
+    <width>358</width>
+    <height>423</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -133,6 +133,24 @@
       </item>
      </layout>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="allReadButton">
+       <property name="text">
+        <string>All Read</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="allWriteButton">
+       <property name="text">
+        <string>All Write</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

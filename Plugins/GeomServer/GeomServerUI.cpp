@@ -37,6 +37,8 @@ void GeomServerUI::setupSlots() {
   connect(numCathSpinBox, SIGNAL(valueChanged(int)), this, SLOT(numCathChanged(int)));
   connect(cathZeroCheckBox, SIGNAL(toggled(bool)), this, SLOT(cathZeroOnlyChanged(bool)));
   connect(senderThread.getSender(), SIGNAL(isNowConnected(char *, int)), this, SLOT(serverConnectDo(char *, int)));
+  connect(allWriteButton, SIGNAL(clicked()), this, SLOT(setAllToWrite()));
+  connect(allReadButton, SIGNAL(clicked()), this, SLOT(setAllToRead()));
 }
 
 //! Set defaults of the UI state
@@ -202,6 +204,32 @@ void GeomServerUI::itemStateChanged(int state) {
     m_cathList[ix1].act = static_cast<SenderThread::ObjectActions>(temp->currentIndex());
   }
   updateReaderObject();
+}
+
+void GeomServerUI::setAllTo_(SenderThread::ObjectActions act) {
+  // Extract plane info.
+  for (int ix1=0; ix1<m_numPlanes; ix1++) {
+    QComboBox* temp = static_cast<QComboBox*>(objectTable->cellWidget(ix1, 1));
+    temp->setCurrentIndex(static_cast<int>(act));
+    m_planeList[ix1].act = act;
+  }
+
+  // Extract catheter info.
+  for (int ix1=0; ix1<m_numCath; ix1++) {
+    QComboBox* temp = static_cast<QComboBox*>(objectTable->cellWidget(ix1+m_numPlanes, 1));
+    temp->setCurrentIndex(static_cast<int>(act));
+    m_cathList[ix1].act = act;
+  }
+
+  updateReaderObject();
+}
+
+void GeomServerUI::setAllToWrite() {
+  setAllTo_(SenderThread::OBJ_WRITE);
+}
+
+void GeomServerUI::setAllToRead() {
+  setAllTo_(SenderThread::OBJ_READ);
 }
 
 void GeomServerUI::cathZeroOnlyChanged (bool status) {

@@ -61,6 +61,11 @@ class GeomServerUI : public QWidget, private Ui::MainUI {
     void itemStateChanged(int);
     void cathZeroOnlyChanged(bool);
     void serverConnectDo(char *,int);
+
+    void setAllTo_(SenderThread::ObjectActions act);
+    void setAllToWrite();
+    void setAllToRead();
+
 };
 
 #endif
