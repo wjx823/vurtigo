@@ -78,6 +78,9 @@ AlignmentToolUI::AlignmentToolUI() {
  // initial distance from target point to monitoring plane 
   monitoringOffsetDoubleSpinBox->setValue(0);
 
+ // initial distance from target point to monitoring plane 
+  thickMonitoringOffsetDoubleSpinBox->setValue(-10);
+
  // initial depth is undefined
   depthEdit->setText("");
 
@@ -94,6 +97,7 @@ void AlignmentToolUI::connectSignals() {
 
   connect( aimingOffsetDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(aimingOffsetChanged(double)) );
   connect( monitoringOffsetDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(monitoringOffsetChanged(double)) );
+  connect( thickMonitoringOffsetDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(thickMonitoringOffsetChanged(double)) );
 
   rt3DPointBufferDataObject *pointTarget = static_cast<rt3DPointBufferDataObject*>(rtBaseHandle::instance().getObjectWithID(m_pointTarget));
   rt3DPointBufferDataObject *pointEntry = static_cast<rt3DPointBufferDataObject*>(rtBaseHandle::instance().getObjectWithID(m_pointEntry));
@@ -105,6 +109,7 @@ void AlignmentToolUI::connectSignals() {
   connect(trajPlane1ComboBox,       SIGNAL(currentIndexChanged(int)), this, SLOT(planeIndexChanged(int)) );
   connect(trajPlane2ComboBox,       SIGNAL(currentIndexChanged(int)), this, SLOT(planeIndexChanged(int)) );
   connect(monitoringPlaneComboBox,  SIGNAL(currentIndexChanged(int)), this, SLOT(planeIndexChanged(int)) );
+  connect(thickMonitoringPlaneComboBox,  SIGNAL(currentIndexChanged(int)), this, SLOT(planeIndexChanged(int)) );
   
   connect( updatePlanesCheckBox, SIGNAL(toggled(bool)), this, SLOT(updatePlanesChanged(bool)) );
 
@@ -112,6 +117,8 @@ void AlignmentToolUI::connectSignals() {
   connect( trajPlane1VisibleCheckBox,      SIGNAL(toggled(bool)), this, SLOT(planeVisibilityCheckBoxChanged(bool)) );
   connect( trajPlane2VisibleCheckBox,      SIGNAL(toggled(bool)), this, SLOT(planeVisibilityCheckBoxChanged(bool)) );
   connect( monitoringPlaneVisibleCheckBox, SIGNAL(toggled(bool)), this, SLOT(planeVisibilityCheckBoxChanged(bool)) );
+  connect( thickMonitoringPlaneVisibleCheckBox, SIGNAL(toggled(bool)), this, SLOT(planeVisibilityCheckBoxChanged(bool)) );
+  
 }
 
 
@@ -125,6 +132,7 @@ int AlignmentToolUI::populateLists() {
   trajPlane1ComboBox->clear();
   trajPlane2ComboBox->clear();
   monitoringPlaneComboBox->clear();
+  thickMonitoringPlaneComboBox->clear();
 
   for (int ix1=0; ix1<planeObjs.size(); ix1++) {
     slice = static_cast<rt2DSliceDataObject*>(rtBaseHandle::instance().getObjectWithID(planeObjs[ix1]));
@@ -137,6 +145,7 @@ int AlignmentToolUI::populateLists() {
       trajPlane1ComboBox->insertItem(ix1, num);
       trajPlane2ComboBox->insertItem(ix1, num);
       monitoringPlaneComboBox->insertItem(ix1, num);
+      thickMonitoringPlaneComboBox->insertItem(ix1, num);
     }
   }
   
@@ -161,6 +170,7 @@ void AlignmentToolUI::objectAdded(int objID) {
     trajPlane1ComboBox->insertItem(trajPlane1ComboBox->count(),             num);
     trajPlane2ComboBox->insertItem(trajPlane2ComboBox->count(),             num);
     monitoringPlaneComboBox->insertItem(monitoringPlaneComboBox->count(),   num);
+    thickMonitoringPlaneComboBox->insertItem(thickMonitoringPlaneComboBox->count(),   num);
   }
   
  // force initial plane selections if we not set
@@ -168,18 +178,23 @@ void AlignmentToolUI::objectAdded(int objID) {
   int trajPlane1Index     = trajPlane1ComboBox->currentIndex();
   int trajPlane2Index      = trajPlane2ComboBox->currentIndex();
   int monitoringPlaneIndex = monitoringPlaneComboBox->currentIndex();
+  int thickMonitoringPlaneIndex = thickMonitoringPlaneComboBox->currentIndex();
+  
   if (
-      (aimingPlaneComboBox->count() == 4) &&
+      (aimingPlaneComboBox->count() == 5) &&
       (aimingPlaneIndex == 0) && 
       (trajPlane1Index == 0)  && 
       (trajPlane2Index == 0)  && 
-      (monitoringPlaneIndex == 0)
+      (monitoringPlaneIndex == 0) &&
+      (thickMonitoringPlaneIndex == 0)
      )
     {
       aimingPlaneComboBox->setCurrentIndex(0); 
       trajPlane1ComboBox->setCurrentIndex(1); 
       trajPlane2ComboBox->setCurrentIndex(2); 
       monitoringPlaneComboBox->setCurrentIndex(3); 
+      thickMonitoringPlaneComboBox->setCurrentIndex(4); 
+      
     }
 
 }
@@ -191,6 +206,7 @@ void AlignmentToolUI::objectRemoved(int objID) {
   int trajPlane1Pos       = trajPlane1ComboBox->currentIndex();
   int trajPlane2Pos       = trajPlane2ComboBox->currentIndex();
   int monitoringPlanePos  = monitoringPlaneComboBox->currentIndex();
+  int thickMonitoringPlanePos  = thickMonitoringPlaneComboBox->currentIndex();
 
  // update lists
   populateLists();
@@ -207,6 +223,9 @@ void AlignmentToolUI::objectRemoved(int objID) {
 
   if ( monitoringPlanePos >= 0 && monitoringPlanePos < monitoringPlaneComboBox->count() ) 
     monitoringPlaneComboBox->setCurrentIndex(monitoringPlanePos);    
+
+  if ( thickMonitoringPlanePos >= 0 && thickMonitoringPlanePos < thickMonitoringPlaneComboBox->count() ) 
+    thickMonitoringPlaneComboBox->setCurrentIndex(thickMonitoringPlanePos);    
 
 }
 
@@ -247,12 +266,14 @@ void AlignmentToolUI::update() {
   int trajPlane1Pos      = trajPlane1ComboBox->currentIndex();
   int trajPlane2Pos      = trajPlane2ComboBox->currentIndex();
   int monitoringPlanePos = monitoringPlaneComboBox->currentIndex();
+  int thickMonitoringPlanePos = thickMonitoringPlaneComboBox->currentIndex();
   
  // get pointers to slice objects (aiming and monitoring)
   rt2DSliceDataObject* sliceAiming     = m_planeObjectMap.value(aimingPlanePos);
   rt2DSliceDataObject* sliceTraj1      = m_planeObjectMap.value(trajPlane1Pos);
   rt2DSliceDataObject* sliceTraj2      = m_planeObjectMap.value(trajPlane2Pos);
   rt2DSliceDataObject* sliceMonitoring = m_planeObjectMap.value(monitoringPlanePos);
+  rt2DSliceDataObject* sliceThickMonitoring = m_planeObjectMap.value(thickMonitoringPlanePos);
 
  // get aiming plane offset distance
   double aimingPlaneOffset = aimingOffsetDoubleSpinBox->value();
@@ -373,6 +394,23 @@ void AlignmentToolUI::update() {
      sliceMonitoring->setPlaneNormal(aimingVector, true);
      sliceMonitoring->setPlaneUp(aimingUp, true);
    }
+
+ // get thick monitoring plane offset distance
+  double thickMonitoringPlaneOffset = thickMonitoringOffsetDoubleSpinBox->value();
+  
+ // get "monitoring point" by backing off monitoringPlaneOffset from the target point in the direction of the aimingVector (plus is deeper)
+  double thickMonitoringPoint[3];
+  thickMonitoringPoint[0] = targetPoint[0] + thickMonitoringPlaneOffset*aimingVector[0];
+  thickMonitoringPoint[1] = targetPoint[1] + thickMonitoringPlaneOffset*aimingVector[1];
+  thickMonitoringPoint[2] = targetPoint[2] + thickMonitoringPlaneOffset*aimingVector[2]; 
+
+ // set monitoring plane
+ if (sliceThickMonitoring && (vtkMath::Norm(aimingVector) != 0) && (sliceThickMonitoring != sliceAiming) && (sliceThickMonitoring != sliceTraj1) && (sliceThickMonitoring != sliceTraj2) && (sliceThickMonitoring != sliceMonitoring))
+   {
+     sliceThickMonitoring->setPlaneCenter(thickMonitoringPoint, true);
+     sliceThickMonitoring->setPlaneNormal(aimingVector, true);
+     sliceThickMonitoring->setPlaneUp(aimingUp, true);
+   }
   
 }
 
@@ -381,6 +419,10 @@ void AlignmentToolUI::aimingOffsetChanged(double offset) {
 }
 
 void AlignmentToolUI::monitoringOffsetChanged(double offset) {
+  update();
+}
+
+void AlignmentToolUI::thickMonitoringOffsetChanged(double offset) {
   update();
 }
 
@@ -406,18 +448,21 @@ void AlignmentToolUI::planeVisibilityCheckBoxChanged(bool dummy)
     int indexTrajPlane1      = trajPlane1ComboBox->currentIndex();
     int indexTrajPlane2      = trajPlane2ComboBox->currentIndex();
     int indexMonitoringPlane = monitoringPlaneComboBox->currentIndex();
+    int indexThickMonitoringPlane = thickMonitoringPlaneComboBox->currentIndex();
 
    // get pointers to slice objects 
     rt2DSliceDataObject* sliceAiming     = m_planeObjectMap.value(indexAimingPlane);
     rt2DSliceDataObject* sliceTraj1      = m_planeObjectMap.value(indexTrajPlane1);
     rt2DSliceDataObject* sliceTraj2      = m_planeObjectMap.value(indexTrajPlane2);
     rt2DSliceDataObject* sliceMonitoring = m_planeObjectMap.value(indexMonitoringPlane);
+    rt2DSliceDataObject* sliceThickMonitoring = m_planeObjectMap.value(indexThickMonitoringPlane);
     
    // get object identifiers
     int idAimingPlane          = sliceAiming     ? sliceAiming->getId()     : -1;
     int idTrajPlane1           = sliceTraj1      ? sliceTraj1->getId()      : -1;
     int idTrajPlane2           = sliceTraj2      ? sliceTraj2->getId()      : -1;
     int idMonitoringPlane      = sliceMonitoring ? sliceMonitoring->getId() : -1;
+    int idThickMonitoringPlane = sliceThickMonitoring ? sliceThickMonitoring->getId() : -1;
 
     if (sliceAiming)
       rtBaseHandle::instance().setObjectVisible3D(idAimingPlane, aimingPlaneVisibleCheckBox->isChecked());
@@ -431,40 +476,7 @@ void AlignmentToolUI::planeVisibilityCheckBoxChanged(bool dummy)
     if (sliceMonitoring)
       rtBaseHandle::instance().setObjectVisible3D(idMonitoringPlane, monitoringPlaneVisibleCheckBox->isChecked());
 
-/*    
-   // get render objects
-    rtRenderObject *renderAimingPlane     = rtBaseHandle::instance().getRenderObjectWithID(idAimingPlane);
-    rtRenderObject *renderTrajPlane1      = rtBaseHandle::instance().getRenderObjectWithID(idTrajPlane1);
-    rtRenderObject *renderTrajPlane2      = rtBaseHandle::instance().getRenderObjectWithID(idTrajPlane2);
-    rtRenderObject *renderMonitoringPlane = rtBaseHandle::instance().getRenderObjectWithID(idMonitoringPlane);
-    
-   // set visibility
-    if (renderAimingPlane)
-      {
-        renderAimingPlane->setVisible3D(aimingPlaneVisibleCheckBox->isChecked());
-        sliceAiming->Modified();
-        renderAimingPlane->updateTreeItem();
-      }
+    if (sliceThickMonitoring)
+      rtBaseHandle::instance().setObjectVisible3D(idThickMonitoringPlane, thickMonitoringPlaneVisibleCheckBox->isChecked());
 
-    if (renderTrajPlane1)
-      {
-        renderTrajPlane1->setVisible3D(trajPlane1VisibleCheckBox->isChecked());
-        sliceTraj1->Modified();
-        renderTrajPlane1->updateTreeItem();
-      }
-
-    if (renderTrajPlane2)
-      {
-        renderTrajPlane2->setVisible3D(trajPlane2VisibleCheckBox->isChecked());
-        sliceTraj2->Modified();
-        renderTrajPlane2->updateTreeItem();
-      }
-
-    if (renderMonitoringPlane)
-      {
-        renderMonitoringPlane->setVisible3D(monitoringPlaneVisibleCheckBox->isChecked());
-        sliceMonitoring->Modified();
-        renderMonitoringPlane->updateTreeItem();
-      }
-*/      
   }

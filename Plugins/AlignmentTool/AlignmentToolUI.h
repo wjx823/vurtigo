@@ -44,6 +44,7 @@ public slots:
 
   void aimingOffsetChanged(double);
   void monitoringOffsetChanged(double);
+  void thickMonitoringOffsetChanged(double);
   
   void pointMoved();
 
