@@ -637,6 +637,11 @@ void TestSuiteBasic::changeImage() {
       signed short *p = (signed short *)imageTemp->GetScalarPointer(px, py, 0);
           
       *p += 100;
+
+      int px2 = 10 +  2*(2*(rand()%10000)/10000.0 - 1);
+      int py2 = 10 +  2*(2*(rand()%10000)/10000.0 - 1);
+      signed short *p2 = (signed short *)imageTemp->GetScalarPointer(px2, py2, 0);
+      *p2 -= 10;      
       
       ptObj->copyImageData2D(imageTemp);
       

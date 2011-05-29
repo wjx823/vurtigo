@@ -281,10 +281,14 @@ void InfusionMonitorUI::updateImage()
       {
         vtkImageMathematics *diff = vtkImageMathematics::New();
         vtkImageMathematics *abs = vtkImageMathematics::New();
-        vtkImageThreshold   *thresh = vtkImageThreshold::New();
+        vtkImageMathematics *scale = vtkImageMathematics::New();
         
-        if (!diff || !abs || !thresh)
+        if (!diff || !abs || !scale)
           return;
+          
+        float thresh = threshold_DoubleSpinBox->value();
+        if (thresh == 0)
+          thresh = 1;
         
         diff->SetOperationToSubtract();
         diff->SetInput1(m_pImageCur);
@@ -292,19 +296,16 @@ void InfusionMonitorUI::updateImage()
         
         abs->SetOperationToAbsoluteValue();
         abs->SetInput1(diff->GetOutput());
+        
+        scale->SetOperationToMultiplyByK();
+        scale->SetInput1(abs->GetOutput());
+        scale->SetConstantK(1000 / thresh);
              
-        abs->Update();
-
-/*        
-        thresh->SetInput(abs->GetOutput());
-        thresh->ThresholdByUpper(0.5); // xxxx
-        thresh->SetInValue(100);
-        thresh->SetOutValue(0);
-        thresh->Update();
-*/        
+        scale->Update();
         
         pImageOut->CopyStructure(m_pImageRef);
-        pImageOut->DeepCopy(abs->GetOutput());
+        pImageOut->DeepCopy(scale->GetOutput());
+        pImageOut->SetScalarType(VTK_UNSIGNED_SHORT);
         
        // spacing gets lost for some reason - restore it
         double spacing[3];
@@ -313,7 +314,7 @@ void InfusionMonitorUI::updateImage()
         
         diff->Delete();
         abs->Delete();
-        thresh->Delete();
+        scale->Delete();
       }
     else
       {

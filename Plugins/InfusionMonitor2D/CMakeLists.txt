@@ -18,7 +18,7 @@ qt4_wrap_ui(UI_INFUSION_MONITOR_OUT ${UI_FILES_INFUSION_MONITOR})
 qt4_wrap_cpp(INFUSION_MONITOR_MOC_FILES_OUT ${INFUSION_MONITOR_MOC_FILES} )
 
 include_directories( 
-  ${CMAKE_BINARY_DIR}/Plugins/InfusionMonitor
+  ${CMAKE_BINARY_DIR}/Plugins/InfusionMonitor2D
 )
 
 add_library(InfusionMonitor SHARED

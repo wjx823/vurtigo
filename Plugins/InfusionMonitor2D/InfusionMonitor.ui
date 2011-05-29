@@ -120,13 +120,19 @@
             <item>
              <widget class="QDoubleSpinBox" name="threshold_DoubleSpinBox">
               <property name="decimals">
-               <number>1</number>
+               <number>0</number>
               </property>
               <property name="minimum">
                <double>0.000000000000000</double>
               </property>
               <property name="maximum">
-               <double>10000.000000000000000</double>
+               <double>10002.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1000.000000000000000</double>
               </property>
              </widget>
             </item>

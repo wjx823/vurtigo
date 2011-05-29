@@ -31,7 +31,7 @@
 #include <QString>
 #include <QMap>
 
-#include "/home/ethan/master_vurtigo/Vurtigo-build/Plugins/InfusionMonitor2D/ui_InfusionMonitor.h" // xxxx fix weird build problem
+#include "ui_InfusionMonitor.h" // xxxx fix weird build problem
 
 #include "rtBasic3DPointData.h"
 #include "rt2dSliceDataObject.h"
