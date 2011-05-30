@@ -73,7 +73,7 @@ AlignmentToolUI::AlignmentToolUI() {
   pointAiming ->unlock();
 
  // initial distance from insertion point to aiming plane
-  aimingOffsetDoubleSpinBox->setValue(50);
+  aimingOffsetDoubleSpinBox->setValue(30);
 
  // initial distance from target point to monitoring plane 
   monitoringOffsetDoubleSpinBox->setValue(0);

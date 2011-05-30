@@ -34,6 +34,7 @@
 #include <QList>
 #include <vtkMath.h>
 #include <vtkMatrix4x4.h>
+#include <vtkImageCast.h>
 #include <vtkImageMathematics.h>
 #include <vtkImageThreshold.h>
 
@@ -279,9 +280,22 @@ void InfusionMonitorUI::updateImage()
       }
     else if (radioButton_diff->isChecked())
       {
+        vtkImageCast *imgCur = vtkImageCast::New();
+        vtkImageCast *imgRef = vtkImageCast::New();
+        
+        if (!imgCur || !imgRef)
+          return;
+          
+        imgCur->SetInput(m_pImageCur);
+        imgRef->SetInput(m_pImageRef);
+        
+        imgCur->SetOutputScalarType(VTK_FLOAT);
+        imgRef->SetOutputScalarType(VTK_FLOAT);
+        
         vtkImageMathematics *diff = vtkImageMathematics::New();
         vtkImageMathematics *abs = vtkImageMathematics::New();
-        vtkImageMathematics *scale = vtkImageMathematics::New();
+        vtkImageShiftScale  *scale = vtkImageShiftScale::New();
+//        vtkImageMathematics *scale = vtkImageMathematics::New();
         
         if (!diff || !abs || !scale)
           return;
@@ -291,15 +305,23 @@ void InfusionMonitorUI::updateImage()
           thresh = 1;
         
         diff->SetOperationToSubtract();
-        diff->SetInput1(m_pImageCur);
-        diff->SetInput2(m_pImageRef);
+        diff->SetInput1(imgCur->GetOutput());
+        diff->SetInput2(imgRef->GetOutput());
         
         abs->SetOperationToAbsoluteValue();
         abs->SetInput1(diff->GetOutput());
         
-        scale->SetOperationToMultiplyByK();
+/*        scale->SetOperationToMultiplyByK();
         scale->SetInput1(abs->GetOutput());
         scale->SetConstantK(1000 / thresh);
+        scale->ClampOverflowOn();
+*/        
+        scale->SetInput(diff/*abs*/->GetOutput());
+        float scale_factor = 1000 / thresh;
+        scale->SetScale(scale_factor);
+        scale->SetShift(10000 / scale_factor);
+        scale->SetOutputScalarType(VTK_UNSIGNED_SHORT);
+        scale->SetClampOverflow(true);
              
         scale->Update();
         
@@ -315,6 +337,9 @@ void InfusionMonitorUI::updateImage()
         diff->Delete();
         abs->Delete();
         scale->Delete();
+        
+        imgCur->Delete();
+        imgRef->Delete();
       }
     else
       {
