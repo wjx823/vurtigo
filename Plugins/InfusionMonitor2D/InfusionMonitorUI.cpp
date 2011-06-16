@@ -61,7 +61,7 @@ InfusionMonitorUI::InfusionMonitorUI() {
     
   m_fRefExists = false;
   
-  threshold_DoubleSpinBox->setValue(50);
+  threshold_DoubleSpinBox->setValue(500);
   
   radioButton_diff->setChecked(true);
 

@@ -33,7 +33,7 @@ AlignmentToolUI::AlignmentToolUI() {
 
  // create target and entry point "buffers"  
   m_pointTarget = rtBaseHandle::instance().requestNewObject(rtConstants::OT_3DPointBuffer, "Target Point");
-  m_pointEntry  = rtBaseHandle::instance().requestNewObject(rtConstants::OT_3DPointBuffer, "Entry Point");
+  m_pointEntry  = rtBaseHandle::instance().requestNewObject(rtConstants::OT_3DPointBuffer, "Pivot Point");
   m_pointAiming  = rtBaseHandle::instance().requestNewObject(rtConstants::OT_3DPointBuffer, "Aiming Point");
   
  // create target (initial) point
@@ -41,7 +41,7 @@ AlignmentToolUI::AlignmentToolUI() {
   p.setPoint(0, 0, 0);
   p.setPointSize(1);
   p.getProperty()->SetOpacity(0.5);
-  p.setColor(1, 0, 0); // red
+  p.setColor(0, 1, 0); // green
   rt3DPointBufferDataObject *pointTarget = static_cast<rt3DPointBufferDataObject*>(rtBaseHandle::instance().getObjectWithID(m_pointTarget));
   pointTarget->lock();
   pointTarget->addPoint(p);
@@ -65,7 +65,7 @@ AlignmentToolUI::AlignmentToolUI() {
   p.setPoint(20, 20, 20);
   p.setPointSize(1);
   p.getProperty()->SetOpacity(0); // invisible for now
-  p.setColor(0, 1, 0); // green
+  p.setColor(1, 0, 0); // red
   rt3DPointBufferDataObject *pointAiming = static_cast<rt3DPointBufferDataObject*>(rtBaseHandle::instance().getObjectWithID(m_pointAiming));
   pointAiming->lock();
   pointAiming->addPoint(p);
@@ -73,13 +73,16 @@ AlignmentToolUI::AlignmentToolUI() {
   pointAiming ->unlock();
 
  // initial distance from insertion point to aiming plane
-  aimingOffsetDoubleSpinBox->setValue(30);
+  aimingOffsetDoubleSpinBox->setValue(50);
 
  // initial distance from target point to monitoring plane 
   monitoringOffsetDoubleSpinBox->setValue(0);
 
  // initial distance from target point to monitoring plane 
   thickMonitoringOffsetDoubleSpinBox->setValue(-10);
+
+ // initial "device length"
+  deviceLengthEdit->setValue(65);
 
  // initial depth is undefined
   depthEdit->setText("");
@@ -98,6 +101,8 @@ void AlignmentToolUI::connectSignals() {
   connect( aimingOffsetDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(aimingOffsetChanged(double)) );
   connect( monitoringOffsetDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(monitoringOffsetChanged(double)) );
   connect( thickMonitoringOffsetDoubleSpinBox, SIGNAL(valueChanged(double)), this, SLOT(thickMonitoringOffsetChanged(double)) );
+
+  connect( deviceLengthEdit, SIGNAL(valueChanged(double)), this, SLOT(deviceLengthChanged(double)) );
 
   rt3DPointBufferDataObject *pointTarget = static_cast<rt3DPointBufferDataObject*>(rtBaseHandle::instance().getObjectWithID(m_pointTarget));
   rt3DPointBufferDataObject *pointEntry = static_cast<rt3DPointBufferDataObject*>(rtBaseHandle::instance().getObjectWithID(m_pointEntry));
@@ -253,9 +258,16 @@ void AlignmentToolUI::update() {
   pointEntry.getPoint(entryPoint);
   pointTarget.getPoint(targetPoint);
 
+ // get "device length"
+  double deviceLength = deviceLengthEdit->value();
+
  // update "insertion depth" display
   double insertionDepth = rtBasic3DPointData::findDistance(pointTarget, pointEntry);
-  depthEdit->setText(QString::number(insertionDepth, 'f', 3)); 
+  double insertionDepth_toDisplay = insertionDepth - deviceLength;
+  if (insertionDepth_toDisplay > 0)
+    depthEdit->setText(QString::number(insertionDepth - deviceLength, 'f', 1)); 
+  else 
+    depthEdit->setText("");
   
  // give up if target point equals entry point
   if (insertionDepth == 0)
@@ -425,6 +437,10 @@ void AlignmentToolUI::monitoringOffsetChanged(double offset) {
 void AlignmentToolUI::thickMonitoringOffsetChanged(double offset) {
   update();
 }
+
+void AlignmentToolUI::deviceLengthChanged(double offset) {
+  update();
+}  
 
 
 void AlignmentToolUI::updatePlanesChanged(bool value)
