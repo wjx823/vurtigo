@@ -42,6 +42,7 @@
     {1,-1,-1} /* Feet First Prone to RCS */
   };
 
+
 class DICOMFileReader
 {
 public:
@@ -67,6 +68,9 @@ public:
   QList<DICOMImageData*>* getDICOMImageData() { return &m_imgData; }
 
 protected:
+  inline static bool sliceLessThan(DICOMImageData *&img1, DICOMImageData *&img2)
+       { return img1->getSliceLocation() < img2->getSliceLocation(); }
+
   QList<QString> m_fileList;
   QList<DICOMImageData*> m_imgData;
 
