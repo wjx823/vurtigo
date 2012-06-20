@@ -225,7 +225,10 @@ void rt3DVolumeRenderObject::newDataAvailable() {
   resetCoronalPlane();
 
   // if it works for one render window, it shuld work for all
-  dObj->setCanGPU(m_gpuRayMapper->IsRenderSupported(rtApplication::instance().getMainWinHandle()->getRenderWindow(0),dObj->getVolumeProperty()));
+  vtkRenderWindow *w = rtApplication::instance().getMainWinHandle()->getRenderWindow(0);
+  vtkVolumeProperty *p = dObj->getVolumeProperty();
+  int r = m_gpuRayMapper->IsRenderSupported(w, p);
+  dObj->setCanGPU(r);
   dObj->setupGPUGUI();
 
   vtkTransform *t = vtkTransform::New();
@@ -600,7 +603,10 @@ void rt3DVolumeRenderObject::setupPipeline() {
 
   m_transFilter = vtkImageReslice::New();
   m_rayMapper = vtkVolumeRayCastMapper::New();
-  m_gpuRayMapper = vtkGPUVolumeRayCastMapper::New();
+  //m_gpuRayMapper
+  vtkGPUVolumeRayCastMapper *p= vtkGPUVolumeRayCastMapper::New();
+  p->IsRenderSupported(0, 0);
+
   m_volumeActor = vtkVolume::New();
   m_volumeActor->PickableOff();
   //m_rayMapper->SetNumberOfThreads(16);
