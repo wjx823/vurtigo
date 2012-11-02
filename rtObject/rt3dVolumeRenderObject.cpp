@@ -227,7 +227,7 @@ void rt3DVolumeRenderObject::newDataAvailable() {
   // if it works for one render window, it shuld work for all
   vtkRenderWindow *w = rtApplication::instance().getMainWinHandle()->getRenderWindow(0);
   vtkVolumeProperty *p = dObj->getVolumeProperty();
-  int r = m_gpuRayMapper->IsRenderSupported(w, p);
+  int r = 0;// m_gpuRayMapper->IsRenderSupported(w, p);
   dObj->setCanGPU(r);
   dObj->setupGPUGUI();
 
@@ -603,9 +603,8 @@ void rt3DVolumeRenderObject::setupPipeline() {
 
   m_transFilter = vtkImageReslice::New();
   m_rayMapper = vtkVolumeRayCastMapper::New();
-  //m_gpuRayMapper
-  vtkGPUVolumeRayCastMapper *p= vtkGPUVolumeRayCastMapper::New();
-  p->IsRenderSupported(0, 0);
+  m_gpuRayMapper = vtkGPUVolumeRayCastMapper::New();
+
 
   m_volumeActor = vtkVolume::New();
   m_volumeActor->PickableOff();

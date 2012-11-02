@@ -37,7 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <vtkImageCast.h>
 #include <vtkVolumeRayCastMapper.h>
-#include <vtkGPUVolumeRayCastMapper.h>
+#include <vtkOpenGLGPUVolumeRayCastMapper.h>
 #include <vtkVolume.h>
 #include <vtkOutlineFilter.h>
 #include <vtkPolyDataMapper.h>
