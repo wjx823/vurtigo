@@ -22,8 +22,8 @@ set (UI_FILES_SCREEN
   ScreenCapture.ui
 )
 
-qt4_wrap_ui(UI_SCREEN_OUT ${UI_FILES_SCREEN})
-qt4_wrap_cpp(SCREEN_CAP_MOC_FILES_OUT ${SCREEN_CAP_MOC_FILES} )
+qt5_wrap_ui(UI_SCREEN_OUT ${UI_FILES_SCREEN})
+qt5_wrap_cpp(SCREEN_CAP_MOC_FILES_OUT ${SCREEN_CAP_MOC_FILES} )
 
 include_directories( ${CMAKE_BINARY_DIR}/Plugins/ScreenCapture )
 

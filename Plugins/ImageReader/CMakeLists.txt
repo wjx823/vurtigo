@@ -17,8 +17,8 @@ set (UI_FILES_DICOM
   DICOMReader.ui
 )
 
-qt4_wrap_ui(UI_DICOM_OUT ${UI_FILES_DICOM})
-qt4_wrap_cpp(DICOM_MOC_FILES_OUT ${DICOM_MOC_FILES} )
+qt5_wrap_ui(UI_DICOM_OUT ${UI_FILES_DICOM})
+qt5_wrap_cpp(DICOM_MOC_FILES_OUT ${DICOM_MOC_FILES} )
 
 include_directories( 
   ${CMAKE_BINARY_DIR}/Plugins/ImageReader 

@@ -16,8 +16,8 @@ set (UI_FILES_MESH
   CardiacMeshReader.ui
 )
 
-qt4_wrap_ui(UI_MESH_OUT ${UI_FILES_MESH})
-qt4_wrap_cpp(MESH_MOC_FILES_OUT ${MESH_MOC_FILES} )
+qt5_wrap_ui(UI_MESH_OUT ${UI_FILES_MESH})
+qt5_wrap_cpp(MESH_MOC_FILES_OUT ${MESH_MOC_FILES} )
 
 include_directories( 
   ${CMAKE_BINARY_DIR}/Plugins/CardiacMeshReader

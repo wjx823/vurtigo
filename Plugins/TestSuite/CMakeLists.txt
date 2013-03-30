@@ -18,8 +18,8 @@ set (UI_FILES_TESTSUITE
   TestSuite.ui
 )
 
-qt4_wrap_ui(UI_TESTSUITE_OUT ${UI_FILES_TESTSUITE})
-qt4_wrap_cpp(TEST_SUITE_MOC_FILES_OUT ${TEST_SUITE_MOC_FILES} )
+qt5_wrap_ui(UI_TESTSUITE_OUT ${UI_FILES_TESTSUITE})
+qt5_wrap_cpp(TEST_SUITE_MOC_FILES_OUT ${TEST_SUITE_MOC_FILES} )
 
 include_directories( ${CMAKE_BINARY_DIR}/Plugins/TestSuite )
 

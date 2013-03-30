@@ -15,8 +15,8 @@ set (UI_FILES_CARTO
   CartoReader.ui
 )
 
-qt4_wrap_ui(UI_CARTO_OUT ${UI_FILES_CARTO})
-qt4_wrap_cpp(CARTO_MOC_FILES_OUT ${CARTO_MOC_FILES} )
+qt5_wrap_ui(UI_CARTO_OUT ${UI_FILES_CARTO})
+qt5_wrap_cpp(CARTO_MOC_FILES_OUT ${CARTO_MOC_FILES} )
 
 include_directories( 
   ${CMAKE_BINARY_DIR}/Plugins/CartoReader 

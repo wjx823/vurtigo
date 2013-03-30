@@ -30,15 +30,15 @@ set(CMAKE_BUILD_TYPE Debug)
 ####################
 # Setup for Qt
 ####################
-find_package(Qt4 REQUIRED)
+find_package(Qt5Widgets REQUIRED) # find and setup Qt5 for this project
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+find_package(Qt5Network REQUIRED)
+include_directories(${Qt5Network_INCLUDE_DIRS})
+find_package(Qt5Xml REQUIRED)
+include_directories(${Qt5Xml_INCLUDE_DIRS})
+find_package(Qt5Help REQUIRED)
+include_directories(${Qt5Help_INCLUDE_DIRS})
 
-if (QT4_FOUND)
-  # Qt Core and Qt Gui are included by default.
-  set(QT_USE_QTNETWORK 1)
-  set(QT_USE_QTXML 1)
-  set(QT_USE_QTHELP 1)
-  include(${QT_USE_FILE})
-endif(QT4_FOUND)
 
 ####################
 # Setup for VTK
@@ -147,7 +147,7 @@ set (UI_FILES
 )
 
 
-qt4_wrap_ui(UI_FILES_OUT ${UI_FILES})
+qt5_wrap_ui(UI_FILES_OUT ${UI_FILES})
 add_custom_target(UIFirst DEPENDS ${UI_FILES_OUT})
 
 add_subdirectory(rtMessage)
@@ -158,7 +158,7 @@ add_subdirectory(rtControl)
 add_subdirectory(rtPlugin)
 add_subdirectory(rtCustomWidgets)
 
-qt4_wrap_cpp(MOC_FILES_OUT ${RTOBJECT_MOC_FILES} ${RTCONTROL_MOC_FILES} ${RTUI_MOC_FILES} ${RTPLUGIN_MOC_FILES} ${RTCUSTOMWIDGETS_MOC_FILES})
+qt5_wrap_cpp(MOC_FILES_OUT ${RTOBJECT_MOC_FILES} ${RTCONTROL_MOC_FILES} ${RTUI_MOC_FILES} ${RTPLUGIN_MOC_FILES} ${RTCUSTOMWIDGETS_MOC_FILES})
 
 set (MAIN_SRC_FILES
   rtMain.cpp

@@ -20,8 +20,8 @@ set (UI_FILES_HELLO
   HelloWorldPluginUI.ui
 )
 
-qt4_wrap_ui(UI_HELLO_OUT ${UI_FILES_HELLO} )
-qt4_wrap_cpp(HELLO_MOC_FILES_OUT ${HELLO_MOC_FILES} )
+qt5_wrap_ui(UI_HELLO_OUT ${UI_FILES_HELLO} )
+qt5_wrap_cpp(HELLO_MOC_FILES_OUT ${HELLO_MOC_FILES} )
 
 include_directories( 
   ${CMAKE_BINARY_DIR}/Plugins/HelloWorld

@@ -15,8 +15,8 @@ set (UI_FILES_CATH_TRACK
   CathTracking.ui
 )
 
-qt4_wrap_ui(UI_CATH_TRACK_OUT ${UI_FILES_CATH_TRACK})
-qt4_wrap_cpp(CATH_TRACK_MOC_FILES_OUT ${CATH_TRACK_MOC_FILES} )
+qt5_wrap_ui(UI_CATH_TRACK_OUT ${UI_FILES_CATH_TRACK})
+qt5_wrap_cpp(CATH_TRACK_MOC_FILES_OUT ${CATH_TRACK_MOC_FILES} )
 
 include_directories( 
   ${CMAKE_BINARY_DIR}/Plugins/CathTracking
